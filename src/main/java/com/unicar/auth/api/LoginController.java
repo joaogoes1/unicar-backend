@@ -1,7 +1,6 @@
 package com.unicar.auth.api;
 
 import com.unicar.auth.domain.LoginService;
-import com.unicar.auth.domain.VerifyUserResponse;
 import com.unicar.util.router.Controller;
 
 import static com.unicar.util.router.BodyParser.bodyTyped;
@@ -34,20 +33,14 @@ public class LoginController implements Controller {
             if (email == null || password == null) {
                 halt(400, "{\"error\": \"email and/or password empty\"}");
             }
-            switch (loginService.verifyUser(email, password)) {
-                case VerifyUserResponse.Success response -> {
+            final String token = loginService.verifyUser(email, password);
+            if (token != null) {
                     res.status(200);
-                    return "{\"token\": \"Bearer " + response.token() + "\"}";
-                }
-                case VerifyUserResponse.Failure error -> {
-                    res.status(401);
-                    return "{\"error\": \"" + error.message() + "\"}";
-                }
-                default -> {
-                    res.status(500);
-                    return "{\"error\": \" Unexpected error\"}";
-                }
+                    return "{\"token\": \"Bearer " + token + "\"}";
+            } else {
+                halt(401, "{\"error\": \"email and/or password incorrect\"}");
             }
+            return "{}";
         });
     }
 

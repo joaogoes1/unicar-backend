@@ -5,7 +5,6 @@ import com.unicar.auth.domain.LoginService;
 import com.unicar.profile.domain.model.Car;
 import com.unicar.profile.domain.model.Profile;
 import com.unicar.profile.domain.service.ProfileService;
-import com.unicar.profile.domain.response.RegisterCarResponse;
 import com.unicar.profile.controller.request.RegisterCarRequest;
 import com.unicar.util.router.Controller;
 
@@ -66,16 +65,13 @@ public class ProfileController implements Controller {
             final String userId = loginService.getUserIdFromToken(authorizationToken);
 
             final Car car = new Car(body.getModel(), body.getPlate(), body.getColor());
-            final RegisterCarResponse response = profileService.registerCar(userId, car);
-            switch (response) {
-                case RegisterCarResponse.Success ignored -> {
-                    res.status(201);
-                    return "{}";
-                }
-                default -> {
-                    res.status(400);
-                    return "{}";
-                }
+            try {
+                profileService.registerCar(userId, car);
+                res.status(201);
+                return "{}";
+            } catch (Exception e) {
+                res.status(400);
+                return "{}";
             }
         });
     }
