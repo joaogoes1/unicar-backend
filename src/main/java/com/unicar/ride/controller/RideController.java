@@ -1,5 +1,6 @@
 package com.unicar.ride.controller;
 
+import com.google.inject.Inject;
 import com.unicar.auth.domain.LoginService;
 import com.unicar.ride.controller.request.CreateRideRequest;
 import com.unicar.ride.controller.request.RemovePassengerRequest;
@@ -18,6 +19,7 @@ public class RideController implements Controller {
     private final RideService rideService;
     private final LoginService loginService;
 
+    @Inject
     public RideController(RideService rideService, LoginService loginService) {
         this.rideService = rideService;
         this.loginService = loginService;
