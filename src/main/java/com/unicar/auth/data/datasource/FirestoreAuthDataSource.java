@@ -5,6 +5,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.inject.Inject;
 import com.unicar.auth.data.model.User;
+import com.unicar.util.log.Logger;
 
 import java.io.InterruptedIOException;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class FirestoreAuthDataSource implements AuthDataSource {
             }
             return new User(emailResponse, userId, passwordResponse);
         } catch (Exception e) {
+            Logger.error(e.getMessage());
             return null;
         }
     }
@@ -54,12 +56,13 @@ public class FirestoreAuthDataSource implements AuthDataSource {
                     .getDocuments()
                     .size();
 
-            if (documentsWithThisEmail > 0) {
+            if (documentsWithThisEmail == 0) {
                 firestore.collection("users").add(Map.of("email", email, "password", hashPassword));
             } else {
                 throw new InterruptedIOException("Usuário já existe.");
             }
         } catch (Exception e) {
+            Logger.error(e.getMessage());
             throw new InterruptedIOException("Erro ao salvar usuário.");
         }
     }
