@@ -11,6 +11,7 @@ import spark.Request;
 import java.util.List;
 
 import static com.unicar.util.router.AuthenticatedRoutes.*;
+import static com.unicar.util.router.BodyParser.bodyTyped;
 
 public class RideController implements Controller {
 
@@ -49,7 +50,7 @@ public class RideController implements Controller {
 
     void postPassenger() {
         postAuthenticated("/ride/passenger", (req, res) -> {
-            final RemovePassengerRequest body = req.bodyTyped(RemovePassengerRequest.class);
+            final RemovePassengerRequest body = bodyTyped(req, RemovePassengerRequest.class);
             rideService.addPassenger(body.getRideId(), body.getPassengerId());
             res.status(200);
             return "{}";
@@ -58,7 +59,7 @@ public class RideController implements Controller {
 
     void deletePassenger() {
         deleteAuthenticated("/ride/passenger", (req, res) -> {
-            final RemovePassengerRequest body = req.bodyTyped(RemovePassengerRequest.class);
+            final RemovePassengerRequest body = bodyTyped(req, RemovePassengerRequest.class);
             rideService.removePassenger(body.getRideId(), body.getPassengerId());
             res.status(200);
             return "{}";
@@ -66,7 +67,7 @@ public class RideController implements Controller {
     }
 
     private Ride bodyToRide(Request req) {
-        final CreateRideRequest body = req.bodyTyped(CreateRideRequest.class);
+        final CreateRideRequest body = bodyTyped(req, CreateRideRequest.class);
         return new Ride(
                 null,
                 getUserId(req, loginService),

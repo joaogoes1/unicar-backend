@@ -1,5 +1,6 @@
 package com.unicar.ride.domain.service;
 
+import com.google.inject.Inject;
 import com.unicar.ride.data.datasource.RideDataSource;
 import com.unicar.ride.domain.model.Ride;
 
@@ -9,6 +10,7 @@ public class RideServiceImpl implements RideService {
 
     private final RideDataSource rideDataSource;
 
+    @Inject
     public RideServiceImpl(RideDataSource rideDataSource) {
         this.rideDataSource = rideDataSource;
     }

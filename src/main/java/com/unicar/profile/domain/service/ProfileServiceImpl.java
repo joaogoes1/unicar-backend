@@ -1,5 +1,6 @@
 package com.unicar.profile.domain.service;
 
+import com.google.inject.Inject;
 import com.unicar.profile.domain.model.Car;
 import com.unicar.profile.data.datasource.ProfileDataSource;
 import com.unicar.profile.domain.model.Profile;
@@ -10,6 +11,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileDataSource dataSource;
 
+    @Inject
     public ProfileServiceImpl(ProfileDataSource dataSource) {
         this.dataSource = dataSource;
     }
