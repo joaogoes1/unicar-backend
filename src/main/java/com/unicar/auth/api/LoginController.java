@@ -1,9 +1,9 @@
 package com.unicar.auth.api;
 
 import com.unicar.auth.domain.LoginService;
-import com.unicar.auth.domain.VerifyUserResponse;
 import com.unicar.util.router.Controller;
 
+import static com.unicar.util.router.BodyParser.bodyTyped;
 import static spark.Spark.halt;
 import static spark.Spark.post;
 
@@ -16,7 +16,7 @@ public class LoginController implements Controller {
 
     public void register() {
         post("/register", (req, res) -> {
-            final LoginRequestBody body = req.bodyTyped(LoginRequestBody.class);
+            final LoginRequestBody body = bodyTyped(req, LoginRequestBody.class);
             final String email = body.getEmail();
             final String password = body.getPassword();
             loginService.registerUser(email, password);
@@ -27,26 +27,20 @@ public class LoginController implements Controller {
 
     public void login() {
         post("/login", (req, res) -> {
-            final LoginRequestBody body = req.bodyTyped(LoginRequestBody.class);
+            final LoginRequestBody body = bodyTyped(req, LoginRequestBody.class);
             final String email = body.getEmail();
             final String password = body.getPassword();
             if (email == null || password == null) {
                 halt(400, "{\"error\": \"email and/or password empty\"}");
             }
-            switch (loginService.verifyUser(email, password)) {
-                case VerifyUserResponse.Success response -> {
+            final String token = loginService.verifyUser(email, password);
+            if (token != null) {
                     res.status(200);
-                    return "{\"token\": \"Bearer " + response.token() + "\"}";
-                }
-                case VerifyUserResponse.Failure error -> {
-                    res.status(401);
-                    return "{\"error\": \"" + error.message() + "\"}";
-                }
-                default -> {
-                    res.status(500);
-                    return "{\"error\": \" Unexpected error\"}";
-                }
+                    return "{\"token\": \"Bearer " + token + "\"}";
+            } else {
+                halt(401, "{\"error\": \"email and/or password incorrect\"}");
             }
+            return "{}";
         });
     }
 

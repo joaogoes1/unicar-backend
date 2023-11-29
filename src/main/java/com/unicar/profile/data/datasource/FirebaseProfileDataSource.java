@@ -1,6 +1,7 @@
 package com.unicar.profile.data.datasource;
 
 import com.google.cloud.firestore.Firestore;
+import com.google.inject.Inject;
 import com.unicar.profile.domain.model.Car;
 import com.unicar.profile.domain.model.Profile;
 import com.unicar.util.log.Logger;
@@ -11,6 +12,7 @@ public class FirebaseProfileDataSource implements ProfileDataSource {
 
     private final Firestore firestore;
 
+    @Inject
     public FirebaseProfileDataSource(Firestore firestore) {
         this.firestore = firestore;
     }

@@ -2,6 +2,7 @@ package com.unicar.ride.data.datasource;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.GeoPoint;
+import com.google.inject.Inject;
 import com.unicar.ride.domain.model.Ride;
 
 import java.util.List;
@@ -11,6 +12,7 @@ public class FirebaseRideDataSource implements RideDataSource {
 
     private final Firestore firestore;
 
+    @Inject
     public FirebaseRideDataSource(Firestore firestore) {
         this.firestore = firestore;
     }

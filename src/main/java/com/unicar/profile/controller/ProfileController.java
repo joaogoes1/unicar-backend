@@ -5,11 +5,11 @@ import com.unicar.auth.domain.LoginService;
 import com.unicar.profile.domain.model.Car;
 import com.unicar.profile.domain.model.Profile;
 import com.unicar.profile.domain.service.ProfileService;
-import com.unicar.profile.domain.response.RegisterCarResponse;
 import com.unicar.profile.controller.request.RegisterCarRequest;
 import com.unicar.util.router.Controller;
 
 import static com.unicar.util.router.AuthenticatedRoutes.*;
+import static com.unicar.util.router.BodyParser.bodyTyped;
 
 public class ProfileController implements Controller {
     private final ProfileService profileService;
@@ -37,7 +37,7 @@ public class ProfileController implements Controller {
         putAuthenticated("/profile", (req, res) -> {
             final String authorizationToken = req.headers("Authorization").replace("Bearer ", "");
             final String userId = loginService.getUserIdFromToken(authorizationToken);
-            final Profile body = req.bodyTyped(Profile.class);
+            final Profile body = bodyTyped(req, Profile.class);
             profileService.updateProfile(userId, body);
             res.status(200);
             return "{}";
@@ -60,21 +60,18 @@ public class ProfileController implements Controller {
 
     public void registerCar() {
         postAuthenticated("/car", (req, res) -> {
-            final RegisterCarRequest body = req.bodyTyped(RegisterCarRequest.class);
+            final RegisterCarRequest body = bodyTyped(req, RegisterCarRequest.class);
             final String authorizationToken = req.headers("Authorization").replace("Bearer ", "");
             final String userId = loginService.getUserIdFromToken(authorizationToken);
 
             final Car car = new Car(body.getModel(), body.getPlate(), body.getColor());
-            final RegisterCarResponse response = profileService.registerCar(userId, car);
-            switch (response) {
-                case RegisterCarResponse.Success ignored -> {
-                    res.status(201);
-                    return "{}";
-                }
-                default -> {
-                    res.status(400);
-                    return "{}";
-                }
+            try {
+                profileService.registerCar(userId, car);
+                res.status(201);
+                return "{}";
+            } catch (Exception e) {
+                res.status(400);
+                return "{}";
             }
         });
     }
