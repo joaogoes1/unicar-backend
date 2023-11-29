@@ -15,6 +15,11 @@ import java.time.Clock;
 public class AuthModule extends AbstractModule {
 
     @Provides
+    static Clock provideClock() {
+        return Clock.systemUTC();
+    }
+
+    @Provides
     static LoginController provideLoginController(LoginService loginService) {
         return new LoginController(loginService);
     }

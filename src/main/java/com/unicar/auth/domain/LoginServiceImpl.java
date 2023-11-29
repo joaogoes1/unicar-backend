@@ -20,14 +20,13 @@ import java.util.Date;
 
 public class LoginServiceImpl implements LoginService {
 
+    public static final int MIN_COST_FACTOR = 4;
     // TODO: COLOCAR A SECRET AQUI
     private static final String SECRET = "gsconfugaogfaonegfoauegfonuayge0f8nctaw4078nrt0n783tr-817q30gryfquk";
     private static final Algorithm algorithm = Algorithm.HMAC512(SECRET);
     private static final Duration TOKEN_TTL = Duration.ofDays(30);
     private static final String JWT_ISSUER = "unicar-spark";
     private final Clock clock;
-
-    public static final int MIN_COST_FACTOR = 4;
     private final BCrypt.Hasher hasher = BCrypt.with(LongPasswordStrategies.hashSha512(BCrypt.Version.VERSION_2A));
     private final BCrypt.Verifyer verifyer = BCrypt.verifyer();
     private final AuthDataSource authDataSource;
@@ -43,20 +42,6 @@ public class LoginServiceImpl implements LoginService {
         this.bcryptCostFactor = bcryptCostFactor;
     }
 
-    public String hash(String password) {
-        return hasher.hashToString(bcryptCostFactor, password.toCharArray());
-    }
-
-    public boolean verifyPassword(String hash, String password) {
-        final BCrypt.Result result = verifyer.verify(password.toCharArray(), hash);
-        if (!result.verified) {
-            Logger.error("Hash verification failed. Error details: " + result.formatErrorMessage);
-        }
-
-        return result.verified;
-    }
-
-
     public static boolean verifyToken(String token) {
         DecodedJWT decodedJWT = null;
         try {
@@ -69,6 +54,19 @@ public class LoginServiceImpl implements LoginService {
             // Invalid signature/claims
         }
         return decodedJWT != null;
+    }
+
+    public String hash(String password) {
+        return hasher.hashToString(bcryptCostFactor, password.toCharArray());
+    }
+
+    public boolean verifyPassword(String hash, String password) {
+        final BCrypt.Result result = verifyer.verify(password.toCharArray(), hash);
+        if (!result.verified) {
+            Logger.error("Hash verification failed. Error details: " + result.formatErrorMessage);
+        }
+
+        return result.verified;
     }
 
     private String generateToken(String name, String email, String userId) {
@@ -87,16 +85,15 @@ public class LoginServiceImpl implements LoginService {
         return token;
     }
 
-    public VerifyUserResponse verifyUser(String email, String password) {
+    public String verifyUser(String email, String password) {
         final User user = authDataSource.getUserByEmail(email);
         if (user != null) {
             final String hash = user.getPassword();
             if (verifyPassword(hash, password)) {
-                final String token = generateToken("name", email, user.getUserId());
-                return new VerifyUserResponse.Success(token);
+                return generateToken("name", email, user.getUserId());
             }
         }
-        return new VerifyUserResponse.Failure("Invalid credentials");
+        return null;
     }
 
     public String getUserIdFromToken(String token) {
@@ -115,12 +112,7 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public RegisterUserResponse registerUser(String email, String password) throws InterruptedIOException {
-        try {
-            authDataSource.createUser(email, hash(password));
-            return new RegisterUserResponse.Success();
-        } catch (Exception e) {
-            return new RegisterUserResponse.UserAlreadyExistsPassword(e.getMessage());
-        }
+    public void registerUser(String email, String password) throws InterruptedIOException {
+        authDataSource.createUser(email, hash(password));
     }
 }

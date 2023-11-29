@@ -1,15 +1,16 @@
 package com.unicar.profile.domain.service;
 
+import com.google.inject.Inject;
 import com.unicar.profile.domain.model.Car;
 import com.unicar.profile.data.datasource.ProfileDataSource;
 import com.unicar.profile.domain.model.Profile;
-import com.unicar.profile.domain.response.RegisterCarResponse;
 import com.unicar.util.log.Logger;
 
 public class ProfileServiceImpl implements ProfileService {
 
     private final ProfileDataSource dataSource;
 
+    @Inject
     public ProfileServiceImpl(ProfileDataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -35,14 +36,8 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public RegisterCarResponse registerCar(String userId, Car car) {
-        try {
-            dataSource.updateCar(userId, car);
-            return new RegisterCarResponse.Success();
-        } catch (Exception e) {
-            Logger.error(e.getMessage());
-            return new RegisterCarResponse.Error();
-        }
+    public void registerCar(String userId, Car car) {
+        dataSource.updateCar(userId, car);
     }
 
     @Override
