@@ -3,38 +3,26 @@ package com.unicar.ride.controller.request;
 import java.util.Date;
 
 public class CreateRideRequest {
-    private final double originLatitude;
-    private final double originLongitude;
-    private final double destinyLatitude;
-    private final double destinyLongitude;
+    private final String origin;
+    private final String destiny;
     private final Date startTime;
     private final int availableSeats;
     private final double price;
 
-    public CreateRideRequest(double originLatitude, double originLongitude, double destinyLatitude, double destinyLongitude, Date startTime, int availableSeats, double price) {
-        this.originLatitude = originLatitude;
-        this.originLongitude = originLongitude;
-        this.destinyLatitude = destinyLatitude;
-        this.destinyLongitude = destinyLongitude;
+    public CreateRideRequest(String origin, String destiny, Date startTime, int availableSeats, double price) {
+        this.origin = origin;
+        this.destiny = destiny;
         this.startTime = startTime;
         this.availableSeats = availableSeats;
         this.price = price;
     }
 
-    public double getOriginLatitude() {
-        return originLatitude;
+    public String getOrigin() {
+        return origin;
     }
 
-    public double getOriginLongitude() {
-        return originLongitude;
-    }
-
-    public double getDestinyLatitude() {
-        return destinyLatitude;
-    }
-
-    public double getDestinyLongitude() {
-        return destinyLongitude;
+    public String getDestiny() {
+        return destiny;
     }
 
     public Date getStartTime() {

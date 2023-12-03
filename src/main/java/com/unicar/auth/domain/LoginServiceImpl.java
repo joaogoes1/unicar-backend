@@ -69,12 +69,11 @@ public class LoginServiceImpl implements LoginService {
         return result.verified;
     }
 
-    private String generateToken(String name, String email, String userId) {
+    private String generateToken(String email, String userId) {
         String token = null;
         try {
             token = JWT.create()
                     .withIssuer(JWT_ISSUER)
-                    .withClaim("name", name)
                     .withClaim("userId", userId)
                     .withClaim("email", email)
                     .withExpiresAt(new Date(clock.instant().plus(TOKEN_TTL).toEpochMilli()))
@@ -90,7 +89,7 @@ public class LoginServiceImpl implements LoginService {
         if (user != null) {
             final String hash = user.getPassword();
             if (verifyPassword(hash, password)) {
-                return generateToken("name", email, user.getUserId());
+                return generateToken(email, user.getUserId());
             }
         }
         return null;
