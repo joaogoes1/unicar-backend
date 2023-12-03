@@ -8,9 +8,6 @@ import com.unicar.ride.domain.model.Ride;
 import com.unicar.ride.domain.service.RideService;
 import com.unicar.util.log.Logger;
 import com.unicar.util.router.Controller;
-import spark.Request;
-
-import java.util.List;
 
 import static com.unicar.util.router.AuthenticatedRoutes.*;
 import static com.unicar.util.router.BodyParser.bodyTyped;
@@ -28,9 +25,8 @@ public class RideController implements Controller {
 
     void postRide() {
         postAuthenticated("/ride", (req, res) -> {
-            final String userId = getUserId(req, loginService);
-            final Ride ride = bodyToRide(req);
-            rideService.registerRide(userId, ride);
+            final CreateRideRequest body = bodyTyped(req, CreateRideRequest.class);
+            rideService.registerRide(body.toRide(getUserId(req, loginService)));
             res.status(201);
             return "{}";
         });
@@ -67,24 +63,6 @@ public class RideController implements Controller {
             res.status(200);
             return "{}";
         });
-    }
-
-    private Ride bodyToRide(Request req) {
-        final CreateRideRequest body = bodyTyped(req, CreateRideRequest.class);
-        Logger.error(body.toString());
-        return new Ride(
-                null,
-                getUserId(req, loginService),
-                body.getStartTime(),
-                0.0,
-                0.0,
-                0.0,
-                0.0,
-                body.getStartTime(),
-                body.getAvailableSeats(),
-                body.getPrice(),
-                List.of()
-        );
     }
 
     @Override

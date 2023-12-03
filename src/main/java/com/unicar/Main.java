@@ -38,9 +38,10 @@ public class Main {
 
             init();
             path("/", () -> {
-                before((req, res) -> Logger.log(req.requestMethod() + " " + req.pathInfo()));
-                after((req, res) -> res.type("application/json"));
                 getControllers().forEach(controller -> injector.getInstance(controller).apis());
+            });
+            before((req, res) -> {
+                Logger.log(req.requestMethod() + " - " + req.pathInfo() + " / " + req.body());
             });
         } catch (Exception e) {
             Logger.error(e.getMessage());

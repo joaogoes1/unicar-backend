@@ -5,7 +5,7 @@ import com.unicar.ride.domain.model.Ride;
 import java.util.List;
 
 public interface RideDataSource {
-    void registerRide(String userId, Ride ride);
+    void registerRide(Ride ride);
 
     List<Ride> getRideByDestiny(double latitude, double longitude);
 

@@ -18,8 +18,8 @@ public class FirebaseRideDataSource implements RideDataSource {
     }
 
     @Override
-    public void registerRide(String userId, Ride ride) {
-        firestore.collection("rides").document(userId).set(ride);
+    public void registerRide(Ride ride) {
+        firestore.collection("rides").add(ride);
     }
 
     @Override

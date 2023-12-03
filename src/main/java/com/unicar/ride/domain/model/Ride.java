@@ -1,6 +1,8 @@
 package com.unicar.ride.domain.model;
 
+import com.google.cloud.firestore.annotation.Exclude;
 import com.google.common.base.Objects;
+import com.google.type.LatLng;
 
 import java.util.Date;
 import java.util.List;
@@ -10,13 +12,9 @@ public class Ride {
 
     private Date arriveDate;
 
-    private double originLatitude;
+    private LatLng origin;
 
-    private double originLongitude;
-
-    private double destinyLatitude;
-
-    private double destinyLongitude;
+    private LatLng destiny;
 
     private Date startDate;
 
@@ -28,34 +26,16 @@ public class Ride {
 
     private List<String> passengersId;
 
-    public Ride(String id, String driverId, Date arriveDate, double originLatitude, double originLongitude, double destinyLatitude, double destinyLongitude, Date startDate, int availableSeats, double price, List<String> passengersId) {
+    public Ride(String id, String driverId, LatLng origin, LatLng destiny, Date arriveDate, Date startDate, int availableSeats, double price, List<String> passengersId) {
         this.id = id;
         this.driverId = driverId;
+        this.origin = origin;
+        this.destiny = destiny;
         this.arriveDate = arriveDate;
-        this.originLatitude = originLatitude;
-        this.originLongitude = originLongitude;
-        this.destinyLatitude = destinyLatitude;
-        this.destinyLongitude = destinyLongitude;
         this.startDate = startDate;
         this.availableSeats = availableSeats;
         this.price = price;
         this.passengersId = passengersId;
-    }
-
-    public double getDestinyLatitude() {
-        return destinyLatitude;
-    }
-
-    public void setDestinyLatitude(double destinyLatitude) {
-        this.destinyLatitude = destinyLatitude;
-    }
-
-    public double getDestinyLongitude() {
-        return destinyLongitude;
-    }
-
-    public void setDestinyLongitude(double destinyLongitude) {
-        this.destinyLongitude = destinyLongitude;
     }
 
     public String getId() {
@@ -74,20 +54,22 @@ public class Ride {
         this.arriveDate = arriveDate;
     }
 
-    public double getOriginLatitude() {
-        return originLatitude;
+    @Exclude
+    public LatLng getOrigin() {
+        return origin;
     }
 
-    public void setOriginLatitude(double originLatitude) {
-        this.originLatitude = originLatitude;
+    public void setOrigin(LatLng origin) {
+        this.origin = origin;
     }
 
-    public double getOriginLongitude() {
-        return originLongitude;
+    @Exclude
+    public LatLng getDestiny() {
+        return destiny;
     }
 
-    public void setOriginLongitude(double originLongitude) {
-        this.originLongitude = originLongitude;
+    public void setDestiny(LatLng destiny) {
+        this.destiny = destiny;
     }
 
     public Date getStartDate() {
@@ -135,8 +117,8 @@ public class Ride {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Ride ride = (Ride) o;
-        return Double.compare(originLatitude, ride.originLatitude) == 0 &&
-                Double.compare(originLongitude, ride.originLongitude) == 0 &&
+        return Objects.equal(origin, ride.origin) &&
+                Objects.equal(destiny, ride.destiny) &&
                 Double.compare(price, ride.price) == 0 &&
                 Objects.equal(id, ride.id) &&
                 Objects.equal(arriveDate, ride.arriveDate) &&
@@ -150,10 +132,10 @@ public class Ride {
         int hashCode = 31;
         hashCode = 31 * hashCode + (id != null ? id.hashCode() : 0);
         hashCode = 31 * hashCode + (arriveDate != null ? arriveDate.hashCode() : 0);
-        hashCode = 31 * hashCode + (int) originLatitude;
-        hashCode = 31 * hashCode + (int) originLongitude;
+        hashCode = 31 * hashCode + (origin != null ? origin.hashCode() : 0);
+        hashCode = 31 * hashCode + (destiny != null ? destiny.hashCode() : 0);
         hashCode = 31 * hashCode + (startDate != null ? startDate.hashCode() : 0);
-        hashCode = 31 * hashCode + (int) price;
+        hashCode = 31 * hashCode + Double.valueOf(price).hashCode();
         hashCode = 31 * hashCode + (driverId != null ? driverId.hashCode() : 0);
         if (passengersId != null)
             for (String passengerId : passengersId) {

@@ -16,8 +16,8 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public void registerRide(String userId, Ride ride) {
-        rideDataSource.registerRide(userId, ride);
+    public void registerRide(Ride ride) {
+        rideDataSource.registerRide(ride);
     }
 
     @Override
