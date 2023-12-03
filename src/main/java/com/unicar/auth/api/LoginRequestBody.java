@@ -1,7 +1,5 @@
 package com.unicar.auth.api;
 
-import java.util.Objects;
-
 class LoginRequestBody {
     private final String email;
     private final String password;

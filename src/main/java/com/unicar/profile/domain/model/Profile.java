@@ -7,21 +7,41 @@ import java.util.Map;
 
 public class Profile {
     private String name;
+    private String imagePath;
     private String email;
     private String ra;
     private String phone;
     private String university;
     private String age;
+    private String driverLicense;
     private Car car;
 
-    public Profile(String name, String email, String ra, String phone, String university, String age, Car car) {
+    public Profile(String name, String imagePath, String email, String ra, String phone, String university, String age, String driverLicense, Car car) {
         this.name = name;
+        this.imagePath = imagePath;
         this.email = email;
         this.ra = ra;
         this.phone = phone;
         this.university = university;
         this.age = age;
+        this.driverLicense = driverLicense;
         this.car = car;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getDriverLicense() {
+        return driverLicense;
+    }
+
+    public void setDriverLicense(String driverLicense) {
+        this.driverLicense = driverLicense;
     }
 
     public String getName() {
@@ -91,6 +111,8 @@ public class Profile {
                 Objects.equal(phone, profile.phone) &&
                 Objects.equal(university, profile.university) &&
                 Objects.equal(age, profile.age) &&
+                Objects.equal(driverLicense, profile.driverLicense) &&
+                Objects.equal(imagePath, profile.imagePath) &&
                 Objects.equal(car, profile.car);
     }
 
@@ -103,6 +125,8 @@ public class Profile {
         ret = 31 * ret + (phone != null ? phone.hashCode() : 0);
         ret = 31 * ret + (university != null ? university.hashCode() : 0);
         ret = 31 * ret + (age != null ? age.hashCode() : 0);
+        ret = 31 * ret + (driverLicense != null ? driverLicense.hashCode() : 0);
+        ret = 31 * ret + (imagePath != null ? imagePath.hashCode() : 0);
         ret = 31 * ret + (car != null ? car.hashCode() : 0);
 
         if (ret < 0) ret = -ret;
@@ -119,6 +143,8 @@ public class Profile {
                 ", phone='" + phone + '\'' +
                 ", university='" + university + '\'' +
                 ", age='" + age + '\'' +
+                ", driverLicense='" + driverLicense + '\'' +
+                ", imagePath='" + imagePath + '\'' +
                 ", car=" + car +
                 '}';
     }

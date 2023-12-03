@@ -6,6 +6,7 @@ import com.unicar.ride.controller.request.CreateRideRequest;
 import com.unicar.ride.controller.request.RemovePassengerRequest;
 import com.unicar.ride.domain.model.Ride;
 import com.unicar.ride.domain.service.RideService;
+import com.unicar.util.log.Logger;
 import com.unicar.util.router.Controller;
 import spark.Request;
 
@@ -70,14 +71,15 @@ public class RideController implements Controller {
 
     private Ride bodyToRide(Request req) {
         final CreateRideRequest body = bodyTyped(req, CreateRideRequest.class);
+        Logger.error(body.toString());
         return new Ride(
                 null,
                 getUserId(req, loginService),
                 body.getStartTime(),
-                body.getOriginLatitude(),
-                body.getOriginLongitude(),
-                body.getDestinyLatitude(),
-                body.getDestinyLongitude(),
+                0.0,
+                0.0,
+                0.0,
+                0.0,
                 body.getStartTime(),
                 body.getAvailableSeats(),
                 body.getPrice(),
