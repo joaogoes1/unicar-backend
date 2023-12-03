@@ -1,11 +1,13 @@
 package com.unicar.profile.data.datasource;
 
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.inject.Inject;
 import com.unicar.profile.domain.model.Car;
 import com.unicar.profile.domain.model.Profile;
 import com.unicar.util.log.Logger;
 
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class FirebaseProfileDataSource implements ProfileDataSource {
@@ -19,12 +21,12 @@ public class FirebaseProfileDataSource implements ProfileDataSource {
 
     @Override
     public Profile getProfile(String userId) throws ExecutionException, InterruptedException {
-        return firestore.collection("users").document(userId).get().get().toObject(Profile.class);
+        return firestore.collection("profile").document(userId).get().get().toObject(Profile.class);
     }
 
     @Override
     public void updateProfile(String userId, Profile profile) {
-        firestore.collection("users").document(userId).update("profile", profile.toJson());
+        firestore.collection("profile").document(userId).update("profile", profile.toJson());
     }
 
     @Override
@@ -39,6 +41,15 @@ public class FirebaseProfileDataSource implements ProfileDataSource {
 
     @Override
     public void updateCar(String userId, Car car) {
-        firestore.collection("profile").document(userId).update("car", car.toJson());
+        try {
+            final DocumentSnapshot document = firestore.collection("profile").document(userId).get().get();
+            if (document.exists()) {
+                firestore.collection("profile").document(userId).update("car", car.toJson());
+            } else {
+                firestore.collection("profile").document(userId).create(Map.of(userId, car.toJson()));
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

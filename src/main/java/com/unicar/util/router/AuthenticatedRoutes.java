@@ -38,9 +38,6 @@ public class AuthenticatedRoutes {
 
     private static void verifyAuthentication(String path) {
         before(path, (req, res) -> {
-            Logger.error(req.body());
-            Logger.error(req.headers("Authorization"));
-            Logger.error(req.headers().toString());
             String token = req.headers("Authorization");
             if (token == null || !verifyToken(token.replace("Bearer ", ""))) {
                 halt(401, "Acesso não autorizado.");

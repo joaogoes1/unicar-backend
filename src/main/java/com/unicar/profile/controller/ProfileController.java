@@ -6,6 +6,7 @@ import com.unicar.profile.domain.model.Car;
 import com.unicar.profile.domain.model.Profile;
 import com.unicar.profile.domain.service.ProfileService;
 import com.unicar.profile.controller.request.RegisterCarRequest;
+import com.unicar.util.log.Logger;
 import com.unicar.util.router.Controller;
 
 import static com.unicar.util.router.AuthenticatedRoutes.*;
@@ -61,8 +62,7 @@ public class ProfileController implements Controller {
     public void registerCar() {
         postAuthenticated("/car", (req, res) -> {
             final RegisterCarRequest body = bodyTyped(req, RegisterCarRequest.class);
-            final String authorizationToken = req.headers("Authorization").replace("Bearer ", "");
-            final String userId = loginService.getUserIdFromToken(authorizationToken);
+            final String userId = getUserId(req, loginService);
 
             final Car car = new Car(body.getModel(), body.getPlate(), body.getColor());
             try {
@@ -70,6 +70,7 @@ public class ProfileController implements Controller {
                 res.status(201);
                 return "{}";
             } catch (Exception e) {
+                Logger.error(e.getMessage());
                 res.status(400);
                 return "{}";
             }
