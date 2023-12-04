@@ -1,5 +1,6 @@
 package com.unicar.profile.controller;
 
+import com.google.gson.Gson;
 import com.google.inject.Inject;
 import com.unicar.auth.domain.LoginService;
 import com.unicar.profile.domain.model.Car;
@@ -27,10 +28,10 @@ public class ProfileController implements Controller {
             final Profile profile = profileService.getProfile(getUserId(req, loginService));
             if (profile == null) {
                 res.status(404);
-                return "{}";
+                return "";
             }
             res.status(200);
-            return profile;
+            return new Gson().toJson(profile);
         });
     }
 

@@ -1,6 +1,8 @@
 package com.unicar.ride.domain.service;
 
 import com.google.inject.Inject;
+import com.google.type.LatLng;
+import com.unicar.ride.controller.response.RideSummary;
 import com.unicar.ride.data.datasource.RideDataSource;
 import com.unicar.ride.domain.model.Ride;
 
@@ -16,8 +18,8 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public void registerRide(Ride ride) {
-        rideDataSource.registerRide(ride);
+    public void registerRide(String userId, Ride ride) {
+        rideDataSource.registerRide(userId, ride);
     }
 
     @Override
@@ -31,8 +33,13 @@ public class RideServiceImpl implements RideService {
     }
 
     @Override
-    public void addPassenger(String rideId, String passengerId) {
-        rideDataSource.addPassenger(rideId, passengerId);
+    public RideSummary getRideByDriver(String userId) {
+        return rideDataSource.getRideByDriver(userId);
+    }
+
+    @Override
+    public void addPassenger(String rideId, String passengerId, LatLng departurePlace) {
+        rideDataSource.addPassenger(rideId, passengerId, departurePlace);
     }
 
     @Override

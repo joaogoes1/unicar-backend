@@ -4,15 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Car {
-    private final String model;
-    private final String plate;
-    private final String color;
+    private String model;
+    private String plate;
+    private String color;
 
     public Car(String name, String plate, String color) {
         this.model = name;
         this.plate = plate;
         this.color = color;
     }
+
+    public Car() {}
 
     public String getModel() {
         return model;

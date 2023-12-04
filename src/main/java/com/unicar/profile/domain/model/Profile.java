@@ -1,6 +1,7 @@
 package com.unicar.profile.domain.model;
 
 import com.google.common.base.Objects;
+import com.unicar.ride.domain.model.Ride;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,11 +13,12 @@ public class Profile {
     private String ra;
     private String phone;
     private String university;
-    private String age;
+    private int age;
     private String driverLicense;
     private Car car;
+    private Ride ride;
 
-    public Profile(String name, String imagePath, String email, String ra, String phone, String university, String age, String driverLicense, Car car) {
+    public Profile(String name, String imagePath, String email, String ra, String phone, String university, int age, String driverLicense, Car car, Ride ride) {
         this.name = name;
         this.imagePath = imagePath;
         this.email = email;
@@ -26,7 +28,10 @@ public class Profile {
         this.age = age;
         this.driverLicense = driverLicense;
         this.car = car;
+        this.ride = ride;
     }
+
+    public Profile() {}
 
     public String getImagePath() {
         return imagePath;
@@ -84,11 +89,11 @@ public class Profile {
         this.university = university;
     }
 
-    public String getAge() {
+    public int getAge() {
         return age;
     }
 
-    public void setAge(String age) {
+    public void setAge(int age) {
         this.age = age;
     }
 
@@ -98,6 +103,14 @@ public class Profile {
 
     public void setCar(Car car) {
         this.car = car;
+    }
+
+    public Ride getRide() {
+        return ride;
+    }
+
+    public void setRide(Ride ride) {
+        this.ride = ride;
     }
 
     @Override
@@ -113,7 +126,8 @@ public class Profile {
                 Objects.equal(age, profile.age) &&
                 Objects.equal(driverLicense, profile.driverLicense) &&
                 Objects.equal(imagePath, profile.imagePath) &&
-                Objects.equal(car, profile.car);
+                Objects.equal(car, profile.car) &&
+                Objects.equal(ride, profile.ride);
     }
 
     @Override
@@ -124,10 +138,11 @@ public class Profile {
         ret = 31 * ret + (ra != null ? ra.hashCode() : 0);
         ret = 31 * ret + (phone != null ? phone.hashCode() : 0);
         ret = 31 * ret + (university != null ? university.hashCode() : 0);
-        ret = 31 * ret + (age != null ? age.hashCode() : 0);
+        ret = 31 * ret + Integer.valueOf(age).hashCode();
         ret = 31 * ret + (driverLicense != null ? driverLicense.hashCode() : 0);
         ret = 31 * ret + (imagePath != null ? imagePath.hashCode() : 0);
         ret = 31 * ret + (car != null ? car.hashCode() : 0);
+        ret = 31 * ret + (ride != null ? ride.hashCode() : 0);
 
         if (ret < 0) ret = -ret;
 
@@ -146,6 +161,7 @@ public class Profile {
                 ", driverLicense='" + driverLicense + '\'' +
                 ", imagePath='" + imagePath + '\'' +
                 ", car=" + car +
+                ", ride=" + ride +
                 '}';
     }
 
@@ -156,8 +172,9 @@ public class Profile {
         if (ra != null) json.put("ra", ra);
         if (phone != null) json.put("phone", phone);
         if (university != null) json.put("university", university);
-        if (age != null) json.put("age", age);
+        json.put("age", age);
         if (car != null) json.put("car", car.toJson());
+        if (ride != null) json.put("ride", ride.toJson());
         return json;
     }
 }

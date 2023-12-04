@@ -1,13 +1,13 @@
 package com.unicar.ride.controller.request;
 
-import com.google.type.LatLng;
+import com.google.api.client.util.DateTime;
+import com.google.cloud.Timestamp;
 import com.unicar.ride.domain.model.Ride;
+import com.unicar.util.parsers.LatLngStringToLatLng;
 
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class CreateRideRequest {
@@ -46,35 +46,12 @@ public class CreateRideRequest {
     }
 
     public Ride toRide(String userId) {
-        Pattern latitudePattern = Pattern.compile("lat: ([0-9\\.\\-]+)");
-        Pattern longitudePattern = Pattern.compile("lng: ([0-9\\.\\-]+)");
-        final Matcher latitudeOriginMatcher = latitudePattern.matcher(origin);
-        final Matcher longitudeOriginMatcher = longitudePattern.matcher(origin);
-        final Matcher latitudeDestinyMatcher = latitudePattern.matcher(origin);
-        final Matcher longitudeDestinyMatcher = longitudePattern.matcher(origin);
-        LatLng origin = null;
-        LatLng destiny = null;
-        if (latitudeOriginMatcher.find() && longitudeOriginMatcher.find()) {
-            origin = LatLng
-                    .newBuilder()
-                    .setLatitude(Double.parseDouble(latitudeOriginMatcher.group(1)))
-                    .setLongitude(Double.parseDouble(longitudeOriginMatcher.group(1)))
-                    .build();
-        }
-        if (latitudeDestinyMatcher.find() && longitudeDestinyMatcher.find()) {
-            destiny = LatLng
-                    .newBuilder()
-                    .setLatitude(Double.parseDouble(latitudeDestinyMatcher.group(1)))
-                    .setLongitude(Double.parseDouble(latitudeDestinyMatcher.group(1)))
-                    .build();
-        }
         return new Ride(
                 null,
                 userId,
-                origin,
-                destiny,
-                Date.from(Instant.ofEpochMilli(startMilliseconds)),
-                Date.from(Instant.ofEpochMilli(startMilliseconds)),
+                LatLngStringToLatLng.parse(origin),
+                LatLngStringToLatLng.parse(destiny),
+                new Date(startMilliseconds),
                 availableSeats,
                 price,
                 List.of()

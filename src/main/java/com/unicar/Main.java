@@ -40,8 +40,9 @@ public class Main {
             path("/", () -> {
                 getControllers().forEach(controller -> injector.getInstance(controller).apis());
             });
-            before((req, res) -> {
-                Logger.log(req.requestMethod() + " - " + req.pathInfo() + " / " + req.body());
+            after((req, res) -> {
+                Logger.log("[REQUEST " + req.requestMethod() + " - " + req.pathInfo() + "] " + req.body() + req.queryParams().toString());
+                Logger.log("[RESPONSE " + req.requestMethod() + " - " + req.pathInfo() + "] " + res.status() + ": " + res.body());
             });
         } catch (Exception e) {
             Logger.error(e.getMessage());

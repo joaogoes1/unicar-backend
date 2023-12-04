@@ -2,15 +2,17 @@ package com.unicar.ride.controller;
 
 import com.google.inject.Inject;
 import com.unicar.auth.domain.LoginService;
+import com.unicar.ride.controller.request.AddPassengerRequest;
 import com.unicar.ride.controller.request.CreateRideRequest;
 import com.unicar.ride.controller.request.RemovePassengerRequest;
-import com.unicar.ride.domain.model.Ride;
+import com.unicar.ride.controller.response.RideSummary;
 import com.unicar.ride.domain.service.RideService;
-import com.unicar.util.log.Logger;
+import com.unicar.util.parsers.LatLngStringToLatLng;
 import com.unicar.util.router.Controller;
 
 import static com.unicar.util.router.AuthenticatedRoutes.*;
 import static com.unicar.util.router.BodyParser.bodyTyped;
+import static spark.Spark.halt;
 
 public class RideController implements Controller {
 
@@ -26,13 +28,13 @@ public class RideController implements Controller {
     void postRide() {
         postAuthenticated("/ride", (req, res) -> {
             final CreateRideRequest body = bodyTyped(req, CreateRideRequest.class);
-            rideService.registerRide(body.toRide(getUserId(req, loginService)));
+            rideService.registerRide(getUserId(req, loginService), body.toRide(getUserId(req, loginService)));
             res.status(201);
             return "{}";
         });
     }
 
-    void getRideByDestiny() {
+    void getRidesByDestiny() {
         getAuthenticated("/ride/destiny/:latitude/:longitude", (req, res) -> {
             final double latitude = Double.parseDouble(req.params(":latitude"));
             final double longitude = Double.parseDouble(req.params(":longitude"));
@@ -40,17 +42,21 @@ public class RideController implements Controller {
         });
     }
 
-    void getRideByUserId() {
-        getAuthenticated("/ride/user/:userId", (req, res) -> {
-            final String userId = req.params(":userId");
-            return rideService.getRideByUserId(userId);
+    void getRideByDriver() {
+        getAuthenticated("/ride", (req, res) -> {
+            final RideSummary result = rideService.getRideByDriver(getUserId(req, loginService));
+            if (result == null) {
+                halt(404);
+                return "";
+            }
+            return result.toJson();
         });
     }
 
     void postPassenger() {
         postAuthenticated("/ride/passenger", (req, res) -> {
-            final RemovePassengerRequest body = bodyTyped(req, RemovePassengerRequest.class);
-            rideService.addPassenger(body.getRideId(), body.getPassengerId());
+            final AddPassengerRequest body = bodyTyped(req, AddPassengerRequest.class);
+            rideService.addPassenger(body.getRideId(), body.getPassengerId(), LatLngStringToLatLng.parse(body.getDeparturePlace()));
             res.status(200);
             return "{}";
         });
@@ -68,8 +74,8 @@ public class RideController implements Controller {
     @Override
     public void apis() {
         postRide();
-        getRideByDestiny();
-        getRideByUserId();
+        getRidesByDestiny();
+        getRideByDriver();
         postPassenger();
         deletePassenger();
     }
