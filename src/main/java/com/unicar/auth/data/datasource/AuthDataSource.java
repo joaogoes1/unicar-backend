@@ -6,5 +6,5 @@ import java.io.InterruptedIOException;
 
 public interface AuthDataSource {
     User getUserByEmail(String email);
-    void createUser(String email, String hash) throws InterruptedIOException;
+    void createUser(String email, String hash, String name, String phone, String ra) throws InterruptedIOException;
 }

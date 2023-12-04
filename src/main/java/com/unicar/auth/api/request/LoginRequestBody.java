@@ -1,6 +1,6 @@
-package com.unicar.auth.api;
+package com.unicar.auth.api.request;
 
-class LoginRequestBody {
+public class LoginRequestBody {
     private final String email;
     private final String password;
 

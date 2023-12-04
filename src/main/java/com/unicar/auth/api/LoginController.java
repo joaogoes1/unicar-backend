@@ -1,7 +1,9 @@
 package com.unicar.auth.api;
 
+import com.unicar.auth.api.request.LoginRequestBody;
+import com.unicar.auth.api.request.RegisterRequestBody;
+import com.unicar.auth.domain.DomainNotAllowedException;
 import com.unicar.auth.domain.LoginService;
-import com.unicar.util.log.Logger;
 import com.unicar.util.router.Controller;
 
 import static com.unicar.util.router.BodyParser.bodyTyped;
@@ -17,12 +19,22 @@ public class LoginController implements Controller {
 
     public void register() {
         post("/register", (req, res) -> {
-            final LoginRequestBody body = bodyTyped(req, LoginRequestBody.class);
+            final RegisterRequestBody body = bodyTyped(req, RegisterRequestBody.class);
             final String email = body.getEmail();
             final String password = body.getPassword();
-            loginService.registerUser(email, password);
-            res.status(201);
-            return "{}";
+            final String name = body.getName();
+            final String phone = body.getPhone();
+            final String ra = body.getRa();
+
+            try {
+                loginService.registerUser(email, password, name, phone, ra);
+                res.status(201);
+            } catch (IllegalStateException | DomainNotAllowedException e) {
+                halt(400, "{\"message\": \"" + e.getMessage() + "\"}");
+            } catch (Exception e) {
+                halt(500, "{\"message\": \"internal server error\"}");
+            }
+            return "";
         });
     }
 

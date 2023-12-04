@@ -8,7 +8,7 @@ public interface LoginService {
     boolean verifyPassword(String hash, String password);
     String verifyUser(String hash, String password);
 
-    void registerUser(String email, String password) throws InterruptedIOException;
+    void registerUser(String email, String password, String name, String phone, String ra) throws InterruptedIOException, DomainNotAllowedException;
     String getUserIdFromToken(String token);
 }
 

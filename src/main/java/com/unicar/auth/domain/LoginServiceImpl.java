@@ -17,6 +17,9 @@ import java.io.InterruptedIOException;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.Date;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LoginServiceImpl implements LoginService {
 
@@ -50,10 +53,22 @@ public class LoginServiceImpl implements LoginService {
                     .build();
 
             decodedJWT = verifier.verify(token);
-        } catch (JWTVerificationException exception) {
-            // Invalid signature/claims
+        } catch (Exception exception) {
+            Logger.error(exception.getMessage());
         }
         return decodedJWT != null;
+    }
+
+    public static boolean isValidEmail(String emailStr) {
+        final Pattern validEmailPattern =
+                Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = validEmailPattern.matcher(emailStr);
+        return matcher.matches();
+    }
+
+    public static boolean isPucCampinasDomain(String emailStr) {
+        final String domain = emailStr.substring(emailStr.indexOf("@") + 1);
+        return Objects.equals(domain, "puc-campinas.edu.br") || Objects.equals(domain, "puccampinas.edu.br");
     }
 
     public String hash(String password) {
@@ -111,7 +126,9 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public void registerUser(String email, String password) throws InterruptedIOException {
-        authDataSource.createUser(email, hash(password));
+    public void registerUser(String email, String password, String name, String phone, String ra) throws InterruptedIOException, DomainNotAllowedException {
+        if (email == null || !isValidEmail(email)) throw new IllegalArgumentException("Email inválido");
+        if (!isPucCampinasDomain(email)) throw new DomainNotAllowedException();
+        authDataSource.createUser(email, hash(password), name, phone, ra);
     }
 }

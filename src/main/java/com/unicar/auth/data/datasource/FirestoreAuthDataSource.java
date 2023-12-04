@@ -47,7 +47,7 @@ public class FirestoreAuthDataSource implements AuthDataSource {
     }
 
     @Override
-    public void createUser(String email, String hashPassword) throws InterruptedIOException {
+    public void createUser(String email, String hashPassword, String name, String phone, String ra) throws InterruptedIOException {
         try {
             final int documentsWithThisEmail = firestore.collection("users")
                     .whereEqualTo("email", email)
@@ -58,6 +58,14 @@ public class FirestoreAuthDataSource implements AuthDataSource {
 
             if (documentsWithThisEmail == 0) {
                 firestore.collection("users").add(Map.of("email", email, "password", hashPassword));
+                String userId = firestore.collection("users")
+                        .whereEqualTo("email", email)
+                        .get()
+                        .get()
+                        .getDocuments()
+                        .get(0)
+                        .getId();
+                firestore.collection("profile").document(userId).set(Map.of("name", name, "phone", phone, "ra", ra));
             } else {
                 throw new InterruptedIOException("Usuário já existe.");
             }
