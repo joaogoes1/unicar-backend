@@ -56,7 +56,7 @@ public class ProfileController implements Controller {
                 return "{}";
             }
             res.status(200);
-            return car;
+            return new Gson().toJson(car);
         });
     }
 
