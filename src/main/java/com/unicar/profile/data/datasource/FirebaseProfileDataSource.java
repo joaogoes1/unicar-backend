@@ -32,7 +32,7 @@ public class FirebaseProfileDataSource implements ProfileDataSource {
     @Override
     public Car getCar(String userId) {
         try {
-            return firestore.collection("car").document(userId).get().get().toObject(Car.class);
+            return firestore.collection("profile").document(userId).get().get().toObject(Profile.class).getCar();
         } catch (Exception e) {
             Logger.error(e.getMessage());
             return null;
