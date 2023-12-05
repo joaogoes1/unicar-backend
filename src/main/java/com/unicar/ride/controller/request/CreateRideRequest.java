@@ -1,11 +1,8 @@
 package com.unicar.ride.controller.request;
 
-import com.google.api.client.util.DateTime;
-import com.google.cloud.Timestamp;
 import com.unicar.ride.domain.model.Ride;
 import com.unicar.util.parsers.LatLngStringToLatLng;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -13,14 +10,14 @@ import java.util.List;
 public class CreateRideRequest {
     private final String origin;
     private final String destiny;
-    private final int startMilliseconds;
+    private final long startTime;
     private final int availableSeats;
     private final double price;
 
-    public CreateRideRequest(String origin, String destiny, int startMilliseconds, int availableSeats, double price) {
+    public CreateRideRequest(String origin, String destiny, long startTime, int availableSeats, double price) {
         this.origin = origin;
         this.destiny = destiny;
-        this.startMilliseconds = startMilliseconds;
+        this.startTime = startTime;
         this.availableSeats = availableSeats;
         this.price = price;
     }
@@ -33,8 +30,8 @@ public class CreateRideRequest {
         return destiny;
     }
 
-    public int getStartMilliseconds() {
-        return startMilliseconds;
+    public long getStartTime() {
+        return startTime;
     }
 
     public int getAvailableSeats() {
@@ -51,7 +48,7 @@ public class CreateRideRequest {
                 userId,
                 LatLngStringToLatLng.parse(origin),
                 LatLngStringToLatLng.parse(destiny),
-                new Date(startMilliseconds),
+                new Date(startTime),
                 availableSeats,
                 price,
                 List.of()
